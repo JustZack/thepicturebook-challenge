@@ -7,7 +7,8 @@ Author: Zack Jones
 */
 
 function zj_gadi_enqueue_dependencies() {
-    wp_enqueue_script("gad-gpt", "https://securepubads.g.doubleclick.net/tag/js/gpt.js");
+    wp_enqueue_script("gad-gpt", "https://securepubads.g.doubleclick.net/tag/js/gpt.js#asyncload");
+    wp_enqueue_script("gad-prebid", plugins_url("prebid.js#asyncload", __FILE__), array("gad-gpt"), "1.0.0");
     wp_enqueue_script("google-ad-integration", plugins_url("google-ad-integration.js", __FILE__), array("gad-gpt", "jquery"), "1.0.0");
     wp_enqueue_style("google-ad-integration", plugins_url("main.css", __FILE__), null, "1.0.0");
 }
@@ -54,24 +55,9 @@ function zj_gadi_right_rail_ad_slot_shortcode($atts = []) {
 }
 
 function zj_gadi_init_google_ads() {
-    echo "<script>";
-    echo "
-        window.googletag = window.googletag || {cmd: []};
-        googletag.cmd.push(function() {
-        
-        googletag.defineSlot('/22360860229/Aditude/aditude_test1', [970, 250], 'gadi-ad-slot-top')
-               .addService(googletag.pubads());
-        googletag.defineSlot('/22360860229/Aditude/aditude_test2', [300, 250], 'gadi-ad-slot-rr-top')
-               .addService(googletag.pubads());
-               googletag.defineSlot('/22360860229/Aditude/aditude_test3', [[300, 600], [300, 250]], 'gadi-ad-slot-rr-middle')
-               .addService(googletag.pubads());
-
-        // Enable SRA and services.
-        googletag.pubads().enableSingleRequest();
-        googletag.enableServices();
-    });";
+    echo "<script>\n";
+    echo file_get_contents(__DIR__."/prebid.wrapper.js");
     echo "</script>";
-
 }
 
 function zj_gadi_init() {
@@ -89,3 +75,14 @@ function zj_gadi_init() {
     add_filter( 'colormag_before_main', 'zj_gadi_top_ad_slot_shortcode' );
 }
 zj_gadi_init();
+
+//So I can easily have async js files in the header
+//https://stackoverflow.com/a/20672324
+function add_async_forscript($url)
+{
+    if (strpos($url, '#asyncload')===false)
+        return $url;
+    else
+        return str_replace('#asyncload', '', $url)."' async='async"; 
+}
+add_filter('clean_url', 'add_async_forscript', 11, 1);
