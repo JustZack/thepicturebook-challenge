@@ -13,8 +13,7 @@ function zj_gadi_enqueue_dependencies() {
     wp_enqueue_style("google-ad-integration", plugins_url("main.css", __FILE__), null, "1.0.0");
 }
 
-
-function zj_gadi_generate_ad_slot_html($type) {
+function zj_gadi_generate_ad_slot_html($type, $adUnitIndex = -1) {
     $id = "";
     if ($type == "top") {   
         $id = "gadi-ad-slot-top";
@@ -27,14 +26,14 @@ function zj_gadi_generate_ad_slot_html($type) {
     <center>
         <div class='gadi-ad-slot-wrapper'>
             <div class='gadi-ad-slot-label'>Advertisment</div>
-            <div class='gadi-ad-slot' id='$id'></div>
+            <div class='gadi-ad-slot' id='$id' data-adunit-index='$adUnitIndex'></div>
         </div>
     </center>";
     return $ad_html;
 }
 
-function zj_gadi_top_ad_slot_shortcode() {
-    echo zj_gadi_generate_ad_slot_html("top");
+function zj_gadi_top_ad_slot() {
+    echo zj_gadi_generate_ad_slot_html("top", 0);
 }
 
 //Right rail can be top or middle
@@ -46,15 +45,16 @@ function zj_gadi_right_rail_ad_slot_shortcode($atts = []) {
     $content = "";
 
     if ($pos == "top") {
-        $content .= zj_gadi_generate_ad_slot_html("right-rail-top");
+        $content .= zj_gadi_generate_ad_slot_html("right-rail-top", 1);
     } else if ($pos == "middle") {
-        $content .= zj_gadi_generate_ad_slot_html("right-rail-middle");
+        $content .= zj_gadi_generate_ad_slot_html("right-rail-middle", 2);
     }
     
     echo $content;
 }
 
 function zj_gadi_init_google_ads() {
+    global $adslot_defines;
     echo "<script>\n";
     echo file_get_contents(__DIR__."/prebid.wrapper.js");
     echo "</script>";
@@ -63,8 +63,6 @@ function zj_gadi_init_google_ads() {
 function zj_gadi_init() {
     //Enqueue js and css
     add_action( 'wp_enqueue_scripts', 'zj_gadi_enqueue_dependencies');
-    //Add google ad code to head
-    add_action( 'wp_head', 'zj_gadi_init_google_ads');
 
     //Allot widgets to run shortcode
     add_filter( 'widget_text', 'do_shortcode' );
@@ -72,17 +70,19 @@ function zj_gadi_init() {
     add_shortcode( 'gadi-right-rail-ad-slot', 'zj_gadi_right_rail_ad_slot_shortcode');
     
     //Add ad the themes main content
-    add_filter( 'colormag_before_main', 'zj_gadi_top_ad_slot_shortcode' );
+    add_filter( 'colormag_before_main', 'zj_gadi_top_ad_slot' );
+
+    //Add google ad code to head
+    add_action( 'wp_head', 'zj_gadi_init_google_ads');
 }
 zj_gadi_init();
 
-//So I can easily have async js files in the header
+//Add #asyncload to any script urls you want to load async
 //https://stackoverflow.com/a/20672324
-function add_async_forscript($url)
-{
+function zj_gadi_so_add_async_forscript($url) {
     if (strpos($url, '#asyncload')===false)
         return $url;
     else
         return str_replace('#asyncload', '', $url)."' async='async"; 
 }
-add_filter('clean_url', 'add_async_forscript', 11, 1);
+add_filter('clean_url', 'zj_gadi_so_add_async_forscript', 11, 1);

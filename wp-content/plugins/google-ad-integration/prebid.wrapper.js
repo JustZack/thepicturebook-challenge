@@ -1,6 +1,6 @@
-var sizes_1 = [[970, 250]];
-var sizes_2 = [[300, 250]];
-var sizes_3 = [[300, 600], [300, 250]];
+var ad_sizes_1 = [[970, 250]];
+var ad_sizes_2 = [[300, 250]];
+var ad_sizes_3 = [[300, 600], [300, 250]];
 
 window.adUnits = [
     {
@@ -8,7 +8,7 @@ window.adUnits = [
         code: '/22360860229/Aditude/aditude_test1',
         mediaTypes: {
             banner: {
-                sizes: sizes_1,
+                sizes: ad_sizes_1,
             },
         },
         bids: [
@@ -38,7 +38,7 @@ window.adUnits = [
         code: '/22360860229/Aditude/aditude_test2',
         mediaTypes: {
             banner: {
-                sizes: sizes_2,
+                sizes: ad_sizes_2,
             },
         },
         bids: [
@@ -68,7 +68,7 @@ window.adUnits = [
         code: '/22360860229/Aditude/aditude_test3',
         mediaTypes: {
             banner: {
-                sizes: sizes_3,
+                sizes: ad_sizes_3,
             },
         },
         bids: [
@@ -129,7 +129,7 @@ function initAdserver() {
     googletag.cmd.push(function() {
         pbjs.que.push(function() {
             pbjs.setTargetingForGPTAsync();
-            googletag.pubads().refresh();
+            //googletag.pubads().refresh();
         });
     });
 }
@@ -139,10 +139,6 @@ setTimeout(function() {
 }, FAILSAFE_TIMEOUT);
 
 googletag.cmd.push(function() {
-    googletag.defineSlot('/22360860229/Aditude/aditude_test1', sizes_1, 'gadi-ad-slot-top').addService(googletag.pubads());
-    googletag.defineSlot('/22360860229/Aditude/aditude_test2', sizes_2, 'gadi-ad-slot-rr-top').addService(googletag.pubads());
-    googletag.defineSlot('/22360860229/Aditude/aditude_test3', sizes_3, 'gadi-ad-slot-rr-middle').addService(googletag.pubads());
-
     // Enable SRA and services.
     googletag.pubads().enableSingleRequest();
     googletag.enableServices();
