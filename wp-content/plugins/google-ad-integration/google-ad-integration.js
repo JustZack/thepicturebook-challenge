@@ -1,30 +1,50 @@
-jQuery(document).ready(function(){
-    function displayGoogleAds() {
-        jQuery("div.gadi-ad-slot").each(function(i, e){
+var googletag = googletag || {};
+googletag.cmd = googletag.cmd || [];
+googletag.cmd.push(function() {
+    jQuery(document).ready(function(){
+        function displayGoogleAds() {
+            //Mobile breakpoint for the theme
             var isMobile = document.body.clientWidth < 752;
-            var id = jQuery(e).attr("id");
-            var adUnitIndex = jQuery(e).data("adunit-index");
-
-             //Ad index is known already, this is a 'hard coded' ad.
-             if (adUnitIndex > -1 && adUnitIndex < adUnits.length) {
-                //Hard coded ads are not shown on mobile (according to test document).
-                if (isMobile) {
-                    jQuery(e).parent().attr("style", "display:none;");
+            //For each ad slot defined on the page
+            jQuery("div.gadi-ad-slot").each(function(i, e){
+                var id = jQuery(e).attr("id");
+                var adUnitIndex = jQuery(e).data("adunit-index");
+                var slot = null;
+                //Ad index is known already, this is a 'hard coded' ad.
+                if (adUnitIndex > -1 && adUnitIndex < adUnits.length) {
+                    defineAdSlot(id, adUnitIndex);
                 } else {
-                    var unit = adUnits[adUnitIndex];
-                    googletag.cmd.push(function() {
-                        googletag.defineSlot(unit["code"], unit["mediaTypes"]["banner"]["sizes"], id).addService(googletag.pubads());
-                    });
+                    if (isMobile) defineResponsiveAdSlot(id, 1);
+                    else defineResponsiveAdSlot(id, 0);
                 }
-            } else {
 
-            }
-        });
-        //
-        googletag.cmd.push(function() {
-            googletag.pubads().refresh();
-        });
-    }
+            }).promise().done(function(){
+                //Refresh the ads
+                googletag.enableServices();
+                googletag.pubads().refresh();
+            });
 
-    displayGoogleAds();
+        }
+
+        function defineResponsiveAdSlot(id, unitIndex) {
+            var unit = adUnits[unitIndex];
+            var slot = googletag.defineSlot(unit["code"], unit["mediaTypes"]["banner"]["sizes"], id).addService(googletag.pubads());
+            var mapping = googletag.sizeMapping()
+                .addSize([1024, 760], [750, 200], [728, 90])
+                .addSize([640, 480], [300, 250])
+                .addSize([0, 0], [300, 250]).build();
+            slot.defineSizeMapping(mapping);
+        }
+
+        function defineAdSlot(id, unitIndex) {
+            var unit = adUnits[unitIndex];
+            var slot = googletag.defineSlot(unit["code"], unit["mediaTypes"]["banner"]["sizes"], id).addService(googletag.pubads());
+            var mapping = googletag.sizeMapping()
+                .addSize([752, 564], unit["mediaTypes"]["banner"]["sizes"])
+                .addSize([0, 0], []).build();
+            slot.defineSizeMapping(mapping);
+        }
+
+        displayGoogleAds();
+    });
 });

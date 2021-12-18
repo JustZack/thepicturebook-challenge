@@ -105,7 +105,11 @@ googletag.cmd = googletag.cmd || [];
 googletag.cmd.push(function() {
     googletag.pubads().enableSingleRequest(); 
     googletag.pubads().disableInitialLoad();
-    googletag.enableServices();
+    googletag.pubads().enableLazyLoad({
+        fetchMarginPercent: 800,  // Fetch slots within 8 viewports.
+        renderMarginPercent: 200,  // Render slots within 2 viewports.
+        mobileScaling: 2.0  // Double the above values on mobile.
+    });
 });
 
 
@@ -137,9 +141,3 @@ function initAdserver() {
 setTimeout(function() {
     initAdserver()
 }, FAILSAFE_TIMEOUT);
-
-googletag.cmd.push(function() {
-    // Enable SRA and services.
-    googletag.pubads().enableSingleRequest();
-    googletag.enableServices();
-});
