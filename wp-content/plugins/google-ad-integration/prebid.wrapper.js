@@ -147,6 +147,5 @@ googletag.cmd.push(function() {
         fetchMarginPercent: 500,  // Fetch slots within 5 viewports.
         renderMarginPercent: 200,  // Render slots within 2 viewports.
         mobileScaling: 2.0  // Double the above values on mobile.
-      });
-    googletag.enableServices();
+    });
 });

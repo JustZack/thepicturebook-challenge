@@ -25,7 +25,7 @@ function zj_gadi_generate_ad_slot_html($type, $adUnitIndex = -1) {
         $id = "gadi-ad-slot-content-".$zj_gadi_page_content_slot_count++;
     }
 
-    $ad_html = "<center><div class='$class'><div class='gadi-ad-slot-label'>Advertisment</div><div class='gadi-ad-slot' id='$id' data-adunit-index='$adUnitIndex'></div></div></center>";
+    $ad_html = "<div class='$class'><div class='gadi-ad-slot-label'>Advertisment</div><div class='gadi-ad-slot' id='$id' data-adunit-index='$adUnitIndex'></div></div>";
     return $ad_html;
 }
 
@@ -56,8 +56,6 @@ function zj_gadi_inject_ads_h2_recursive($content, $offset) {
     if ($offset !== false) return zj_gadi_inject_ads_h2_recursive($content, $offset);
     else return $content;
 }
-
-
 
 function zj_gadi_inject_ads($content) {
     //Inject ads after each h2
