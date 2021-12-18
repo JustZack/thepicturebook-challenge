@@ -60,7 +60,10 @@ function zj_gadi_inject_ads_h2_recursive($content, $offset) {
 
 
 function zj_gadi_inject_ads($content) {
+    //Inject ads after each h2
     $new_content = zj_gadi_inject_ads_h2_recursive($content, 0);
+    //Inject ads after the first (125+char) paragraphs of each section
+    //Or Inject ads after the second paragraphs of each section
     return $new_content;
 }
 
@@ -80,8 +83,9 @@ function zj_gadi_init() {
     //Add important google ad code to the header
     add_action( 'wp_head', 'zj_gadi_init_google_ads');
     
-    //Place an ad just before the main content
+    //Place an ad at the top of the main content
     add_filter( 'colormag_before_main', 'zj_gadi_top_ad_slot' );
+    //Place an ad at the top of the sidebar
     add_filter( 'colormag_before_sidebar', 'zj_gadi_right_rail_top_ad_slot' );
 
     //Allow widgets to run shortcode & Add the right rail widget shortcode

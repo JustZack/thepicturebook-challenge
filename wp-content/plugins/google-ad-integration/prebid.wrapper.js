@@ -141,5 +141,12 @@ setTimeout(function() {
 googletag.cmd.push(function() {
     // Enable SRA and services.
     googletag.pubads().enableSingleRequest();
+
+    //Sample lazy load params seem pretty good
+    googletag.pubads().enableLazyLoad({
+        fetchMarginPercent: 500,  // Fetch slots within 5 viewports.
+        renderMarginPercent: 200,  // Render slots within 2 viewports.
+        mobileScaling: 2.0  // Double the above values on mobile.
+      });
     googletag.enableServices();
 });
